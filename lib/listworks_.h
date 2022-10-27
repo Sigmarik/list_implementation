@@ -49,6 +49,23 @@ struct List {
 };
 
 /**
+ * @brief Initialize list of the specified size.
+ * 
+ * @param list list to initialize
+ * @param capacity max number of elements the list can hold
+ * @param err_code variable to use as errno
+ */
+void List_ctor(List* list, int capacity = 1024, int* const err_code = NULL);
+
+/**
+ * @brief Destroy the list.
+ * 
+ * @param list list to uninitialize
+ * @param err_code variable to use as errno
+ */
+void List_dtor(List* list, int* const err_code = NULL);
+
+/**
  * @brief Insert element into the list.
  * 
  * @param list 

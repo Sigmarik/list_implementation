@@ -38,11 +38,11 @@ void List_ctor(List* list, size_t capacity, int* const err_code) {
     list->first_empty = list->buffer + 1;
     list->size = 0;
 
-    _LOG_FAIL_CHECK_(List_status(list), "error", ERROR_REPORTS, return, err_code, EAGAIN);
+    _LOG_FAIL_CHECK_(List_status(list) == 0, "error", ERROR_REPORTS, return, err_code, EAGAIN);
 }
 
 void List_dtor(List* list, int* const err_code) {
-    _LOG_FAIL_CHECK_(List_status(list), "error", ERROR_REPORTS, return, err_code, EFAULT);
+    _LOG_FAIL_CHECK_(List_status(list) == 0, "error", ERROR_REPORTS, return, err_code, EFAULT);
 
     free(list->buffer);
     
@@ -50,15 +50,12 @@ void List_dtor(List* list, int* const err_code) {
     list->capacity = 0;
     list->first_empty = NULL;
     list->size = 0;
-
-    _LOG_FAIL_CHECK_(List_status(list), "error", ERROR_REPORTS, return, err_code, EAGAIN);
 }
 
-void List_dtor_void(List* list) { List_dtor(list, NULL); }
+void List_dtor_void(List* const list) { List_dtor(list, NULL); }
 
 list_position_t List_insert(List* const list, const list_elem_t elem, const list_position_t position, int* const err_code) {
-    _LOG_FAIL_CHECK_(List_status(list), "error", ERROR_REPORTS, return 0, err_code, EFAULT);
-    _LOG_FAIL_CHECK_(position > 0, "error", ERROR_REPORTS, return 0, err_code, EINVAL);
+    _LOG_FAIL_CHECK_(List_status(list) == 0, "error", ERROR_REPORTS, return 0, err_code, EFAULT);
     _LOG_FAIL_CHECK_(position < list->capacity, "error", ERROR_REPORTS, return 0, err_code, EINVAL);
     _LOG_FAIL_CHECK_(list->first_empty->next != NULL, "error", ERROR_REPORTS, return 0, err_code, ENOMEM);
 
@@ -75,25 +72,27 @@ list_position_t List_insert(List* const list, const list_elem_t elem, const list
     prev_nbor->next = pasted_cell;
     next_nbor->prev = pasted_cell;
 
-    _LOG_FAIL_CHECK_(List_status(list), "error", ERROR_REPORTS, return 0, err_code, EAGAIN);
+    ++list->size;
+
+    _LOG_FAIL_CHECK_(List_status(list) == 0, "error", ERROR_REPORTS, return 0, err_code, EAGAIN);
 
     return (list_position_t)(pasted_cell - list->buffer);
 }
 
 list_position_t List_find_position(List* const list, const int index, int* const err_code) {
-    _LOG_FAIL_CHECK_(List_status(list), "error", ERROR_REPORTS, return 0, err_code, EFAULT);
-    _LOG_FAIL_CHECK_(abs(index) < list->size, "error", ERROR_REPORTS, return 0, err_code, EINVAL);
+    _LOG_FAIL_CHECK_(List_status(list) == 0, "error", ERROR_REPORTS, return 0, err_code, EFAULT);
+    //_LOG_FAIL_CHECK_(abs(index) < list->size, "error", ERROR_REPORTS, return 0, err_code, EINVAL);
 
     _ListCell* current = NULL;
 
     if (index >= 0) {
         current = list->buffer->next;
-        for (int id = 0; id < index; id++) {
+        for (int id = 0; id < index; ++id) {
             current = current->next;
         }
     } else {
         current = list->buffer->prev;
-        for (int id = -1; id > index; id++) {
+        for (int id = -1; id > index; --id) {
             current = current->prev;
         }
     }
@@ -102,7 +101,7 @@ list_position_t List_find_position(List* const list, const int index, int* const
 }
 
 list_elem_t List_get(List* const list, const list_position_t position, int* const err_code) {
-    _LOG_FAIL_CHECK_(List_status(list), "error", ERROR_REPORTS, return 0, err_code, EFAULT);
+    _LOG_FAIL_CHECK_(List_status(list) == 0, "error", ERROR_REPORTS, return 0, err_code, EFAULT);
     _LOG_FAIL_CHECK_(position < list->capacity, "error", ERROR_REPORTS, return 0, err_code, EINVAL);
     _LOG_FAIL_CHECK_(list->first_empty->next != NULL, "error", ERROR_REPORTS, return 0, err_code, ENOMEM);
     
@@ -110,11 +109,14 @@ list_elem_t List_get(List* const list, const list_position_t position, int* cons
 }
 
 void List_pop(List* const list, const list_position_t position, int* const err_code) {
-    _LOG_FAIL_CHECK_(List_status(list), "error", ERROR_REPORTS, return, err_code, EFAULT);
+    _LOG_FAIL_CHECK_(List_status(list) == 0, "error", ERROR_REPORTS, return, err_code, EFAULT);
     _LOG_FAIL_CHECK_(position < list->capacity, "error", ERROR_REPORTS, return, err_code, EINVAL);
     _LOG_FAIL_CHECK_(list->first_empty->next != NULL, "error", ERROR_REPORTS, return, err_code, ENOMEM);
+    _LOG_FAIL_CHECK_(list->size > 0, "error", ERROR_REPORTS, return, err_code, ENOENT);
 
     _ListCell* cell = list->buffer + position;
+
+    _LOG_FAIL_CHECK_(cell->content != LIST_ELEM_POISON, "error", ERROR_REPORTS, return, err_code, EFAULT);
 
     cell->prev->next = cell->next;
     cell->next->prev = cell->prev;
@@ -122,9 +124,13 @@ void List_pop(List* const list, const list_position_t position, int* const err_c
     *cell = {};
 
     cell->next = list->first_empty;
+    cell->prev = NULL;
+    list->first_empty->prev = cell;
     list->first_empty = cell;
 
-    _LOG_FAIL_CHECK_(List_status(list), "error", ERROR_REPORTS, return, err_code, EAGAIN);
+    --list->size;
+
+    _LOG_FAIL_CHECK_(List_status(list) == 0, "error", ERROR_REPORTS, return, err_code, EAGAIN);
 }
 
 list_report_t List_status(List* const list) {
@@ -162,9 +168,9 @@ void _List_dump(List* const list, const unsigned int importance, const int line,
     _log_printf(importance, LIST_DUMP_TAG, "\tbuffer at %p:\n", list->buffer);
 
     for (size_t id = 0; id < list->capacity; id++) {
-        _log_printf(importance, LIST_DUMP_TAG, "\t\t[%5ld] = %s, prev [%ld], next [%ld]\n", id,
+        _log_printf(importance, LIST_DUMP_TAG, "\t\t[%5ld] = %s, next [%ld], prev [%ld]\n", id,
             list->buffer[id].content == LIST_ELEM_POISON ? "POISON" : "VALUE",
-            list->buffer[id].next - list->buffer, list->buffer[id].prev - list->buffer);
+            list->buffer[id].next - list->buffer, list->buffer[id].prev ? list->buffer[id].prev - list->buffer : -1);
     }
 }
 

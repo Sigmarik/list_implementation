@@ -44,7 +44,8 @@ int main(const int argc, const char** argv) {
     atexit(log_end_program);
 
     //* Ignore everything less or equaly important as status reports.
-    static unsigned int log_threshold = STATUS_REPORTS + 1;
+    unsigned int log_threshold = STATUS_REPORTS + 1;
+    unsigned int list_size = 128;
 
     ActionTag line_tags[] = {
         #include "cmd_flags/main_flags.h"
@@ -55,7 +56,26 @@ int main(const int argc, const char** argv) {
     log_init("program_log.log", log_threshold, &errno);
     print_label();
 
+    List list = {};
+    List_ctor(&list, list_size, &errno);
 
+    List_dump(&list, ABSOLUTE_IMPORTANCE);
+
+    track_allocation(&list, (dtor_t*)List_dtor_void);
+
+    for (int counter = 0; counter < 100; counter++) {
+        List_insert(&list, counter, List_find_position(&list, -1, &errno), &errno);
+    }
+
+    List_dump(&list, ABSOLUTE_IMPORTANCE);
+
+    for (int counter = 0; counter < 30; counter++) {
+        List_pop(&list, List_find_position(&list, 0, &errno), &errno);
+    }
+
+    List_dump(&list, ABSOLUTE_IMPORTANCE);
+
+    while (list.size) List_pop(&list, List_find_position(&list, -1, &errno), &errno);
 
     return_clean(errno == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
 }

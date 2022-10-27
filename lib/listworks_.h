@@ -73,7 +73,7 @@ void List_dtor(List* list, int* const err_code = NULL);
  * 
  * @param list list to destroy
  */
-void List_dtor_void(List* list);
+void List_dtor_void(List* const list);
 
 /**
  * @brief Insert element into the list.

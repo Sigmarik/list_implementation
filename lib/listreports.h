@@ -18,7 +18,13 @@ enum LIST_STATUSES {
     LIST_BIG_SIZE = 1 << 1,
     LIST_NULL_CONTENT = 1 << 2,
     LIST_INV_FREE = 1 << 3,
-    LIST_INV_SEQUENCE = 1 << 4,
+};
+
+static const char* const LIST_STATUS_DESCR[] = {
+    "List pointer was invalid.",
+    "List size was bigger than its capacity.",
+    "List buffer pointer was invalid.",
+    "List pointer to the first empty cell was invalid.",
 };
 
 #endif

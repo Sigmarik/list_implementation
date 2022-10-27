@@ -17,6 +17,8 @@
 #include "lib/util/dbg/debug.h"
 #include "listreports.h"
 
+const char LIST_DUMP_TAG[] = "list_dump";
+
 //* In case of a compilation error on this line check if [list_elen_t LIST_ELEM_POISON] is defined before the library include.
 static const list_elem_t ___LIST_ELEM_T_OR_POISON_IS_NOT_DEFINED___ = LIST_ELEM_POISON;
 //* Define [list_elem_t] and [list_elem_t LIST_ELEM_POISON] with the value you want the list to consider poisonous.
@@ -25,7 +27,8 @@ static const list_elem_t ___LIST_ELEM_T_OR_POISON_IS_NOT_DEFINED___ = LIST_ELEM_
 //*   static const list_elem_t LIST_ELEM_POISON = '\0';
 //*   #include "listworks.h"
 
-static const size_t LIST_BUFFER_INCREASE = 2;
+//* Type that is used to identify elements in raw list buffer.
+typedef uintptr_t list_position_t;
 
 /**
  * @brief Primary content of the list with all the linkage.
@@ -52,7 +55,7 @@ struct List {
  * @brief Initialize list of the specified size.
  * 
  * @param list list to initialize
- * @param capacity max number of elements the list can hold
+ * @param capacity max number of elements the list can hold +1 empty element
  * @param err_code variable to use as errno
  */
 void List_ctor(List* list, size_t capacity = 1024, int* const err_code = NULL);
@@ -66,33 +69,50 @@ void List_ctor(List* list, size_t capacity = 1024, int* const err_code = NULL);
 void List_dtor(List* list, int* const err_code = NULL);
 
 /**
+ * @brief Dtor-capable destructor function.
+ * 
+ * @param list list to destroy
+ */
+void List_dtor_void(List* list);
+
+/**
  * @brief Insert element into the list.
  * 
  * @param list 
  * @param elem element to insert
- * @param index which element to insert after (can be negative if inverse indexation is used)
+ * @param position which element to insert after
  * @param err_code variable to use as errno
  */
-void List_insert(List* const list, const list_elem_t elem, const int index = -1, int* const err_code = NULL);
+list_position_t List_insert(List* const list, const list_elem_t elem, const list_position_t position, int* const err_code = NULL);
+
+/**
+ * @brief Find position of the index'th element in the list.
+ * 
+ * @param list 
+ * @param index index of the element
+ * @param err_code variable to use as errno
+ * @return 
+ */
+list_position_t List_find_position(List* const list, const int index, int* const err_code = NULL);
 
 /**
  * @brief Get element from the list at specified position.
  * 
  * @param list 
- * @param index position of the element (can be negative if inverse count is used)
+ * @param position position of the element
  * @param err_code variable to use as errno
  * @return list_elem_t
  */
-list_elem_t List_get(List* const list, const long long index, int* const err_code = NULL);
+list_elem_t List_get(List* const list, const list_position_t position, int* const err_code = NULL);
 
 /**
  * @brief Remove element from the list.
  * 
  * @param list 
- * @param index position of the element (can be negative if inverse count is used)
+ * @param position position of the element
  * @param err_code variable to use as errno
  */
-void List_pop(List* const list, const long long index, int* const err_code = NULL);
+void List_pop(List* const list, const list_position_t position, int* const err_code = NULL);
 
 /**
  * @brief Get info about list as binary mask.
@@ -109,6 +129,7 @@ list_report_t List_status(List* const list);
  * @param importance message importance
  */
 #define List_dump(list, importance) \
+    log_printf(importance, LIST_DUMP_TAG, "Called list dumping."); \
     _List_dump(list, importance, __LINE__, __PRETTY_FUNCTION__, __FILE__);
 
 /**

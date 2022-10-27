@@ -57,10 +57,10 @@ void List_dtor(List* list, int* const err_code) {
 void List_dtor_void(List* list) { List_dtor(list, NULL); }
 
 list_position_t List_insert(List* const list, const list_elem_t elem, const list_position_t position, int* const err_code) {
-    _LOG_FAIL_CHECK_(List_status(list), "error", ERROR_REPORTS, return, err_code, EFAULT);
-    _LOG_FAIL_CHECK_(position > 0, "error", ERROR_REPORTS, return, err_code, EINVAL);
-    _LOG_FAIL_CHECK_(position < list->capacity, "error", ERROR_REPORTS, return, err_code, EINVAL);
-    _LOG_FAIL_CHECK_(list->first_empty->next != NULL, "error", ERROR_REPORTS, return, err_code, ENOMEM);
+    _LOG_FAIL_CHECK_(List_status(list), "error", ERROR_REPORTS, return 0, err_code, EFAULT);
+    _LOG_FAIL_CHECK_(position > 0, "error", ERROR_REPORTS, return 0, err_code, EINVAL);
+    _LOG_FAIL_CHECK_(position < list->capacity, "error", ERROR_REPORTS, return 0, err_code, EINVAL);
+    _LOG_FAIL_CHECK_(list->first_empty->next != NULL, "error", ERROR_REPORTS, return 0, err_code, ENOMEM);
 
     _ListCell* pasted_cell = list->first_empty;
     list->first_empty = list->first_empty->next;
@@ -75,14 +75,14 @@ list_position_t List_insert(List* const list, const list_elem_t elem, const list
     prev_nbor->next = pasted_cell;
     next_nbor->prev = pasted_cell;
 
-    _LOG_FAIL_CHECK_(List_status(list), "error", ERROR_REPORTS, return, err_code, EAGAIN);
+    _LOG_FAIL_CHECK_(List_status(list), "error", ERROR_REPORTS, return 0, err_code, EAGAIN);
 
-    return pasted_cell - list->buffer;
+    return (list_position_t)(pasted_cell - list->buffer);
 }
 
 list_position_t List_find_position(List* const list, const int index, int* const err_code) {
-    _LOG_FAIL_CHECK_(List_status(list), "error", ERROR_REPORTS, return, err_code, EFAULT);
-    _LOG_FAIL_CHECK_(abs(index) < list->size, "error", ERROR_REPORTS, return, err_code, EINVAL);
+    _LOG_FAIL_CHECK_(List_status(list), "error", ERROR_REPORTS, return 0, err_code, EFAULT);
+    _LOG_FAIL_CHECK_(abs(index) < list->size, "error", ERROR_REPORTS, return 0, err_code, EINVAL);
 
     _ListCell* current = NULL;
 
@@ -98,13 +98,13 @@ list_position_t List_find_position(List* const list, const int index, int* const
         }
     }
 
-    return current - list->buffer;
+    return (list_position_t)(current - list->buffer);
 }
 
 list_elem_t List_get(List* const list, const list_position_t position, int* const err_code) {
-    _LOG_FAIL_CHECK_(List_status(list), "error", ERROR_REPORTS, return, err_code, EFAULT);
-    _LOG_FAIL_CHECK_(position < list->capacity, "error", ERROR_REPORTS, return, err_code, EINVAL);
-    _LOG_FAIL_CHECK_(list->first_empty->next != NULL, "error", ERROR_REPORTS, return, err_code, ENOMEM);
+    _LOG_FAIL_CHECK_(List_status(list), "error", ERROR_REPORTS, return 0, err_code, EFAULT);
+    _LOG_FAIL_CHECK_(position < list->capacity, "error", ERROR_REPORTS, return 0, err_code, EINVAL);
+    _LOG_FAIL_CHECK_(list->first_empty->next != NULL, "error", ERROR_REPORTS, return 0, err_code, ENOMEM);
     
     return (list->buffer + position)->content;
 }
@@ -140,7 +140,9 @@ list_report_t List_status(List* const list) {
     return report;
 }
 
-void _List_dump(List* const list, const int importance, const int line, const char* func_name, const char* file_name) {
+void _List_dump(List* const list, const unsigned int importance, const int line, const char* func_name, const char* file_name) {
+    _log_printf(importance, "dump", " ----- List dump in function %s of file %s (%ld): ----- \n", func_name, file_name, line);
+
     list_report_t status = List_status(list);
 
     _log_printf(importance, LIST_DUMP_TAG, "List at %p:\n", list);

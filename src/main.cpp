@@ -18,7 +18,7 @@
 #include "utils/common.h"
 
 typedef long long list_elem_t;
-const list_elem_t LIST_ELEM_POISON = (list_elem_t)0xC0FEDEADBEEFBABEDEADFACE;
+const list_elem_t LIST_ELEM_POISON = (list_elem_t)0xC0FEDEADBEEFFACE;
 #include "lib/listworks.h"
 
 #define MAIN

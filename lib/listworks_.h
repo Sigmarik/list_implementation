@@ -141,6 +141,6 @@ list_report_t List_status(List* const list);
  * @param func_name name of the top-function
  * @param file_name name of the file where invokation happend
  */
-void _List_dump(List* const list, const int importance, const int line, const char* func_name, const char* file_name);
+void _List_dump(List* const list, const unsigned int importance, const int line, const char* func_name, const char* file_name);
 
 #endif

@@ -17,7 +17,7 @@
 #include "lib/alloc_tracker/alloc_tracker.h"
 #include "utils/common.h"
 
-#define ASSEMBLER
+#define MAIN
 
 /**
  * @brief Print a bunch of owls.

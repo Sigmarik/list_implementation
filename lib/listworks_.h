@@ -44,8 +44,8 @@ struct _ListCell {
 struct List {
     _ListCell* buffer = NULL;
     _ListCell* first_empty = NULL;
-    int size = 0;
-    int capacity = 0;
+    size_t size = 0;
+    size_t capacity = 0;
 };
 
 /**
@@ -55,7 +55,7 @@ struct List {
  * @param capacity max number of elements the list can hold
  * @param err_code variable to use as errno
  */
-void List_ctor(List* list, int capacity = 1024, int* const err_code = NULL);
+void List_ctor(List* list, size_t capacity = 1024, int* const err_code = NULL);
 
 /**
  * @brief Destroy the list.

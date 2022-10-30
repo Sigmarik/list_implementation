@@ -49,6 +49,7 @@ struct List {
     _ListCell* first_empty = NULL;
     size_t size = 0;
     size_t capacity = 0;
+    bool linearized = true;
 };
 
 /**
@@ -74,6 +75,14 @@ void List_dtor(List* list, int* const err_code = NULL);
  * @param list list to destroy
  */
 void List_dtor_void(List* const list);
+
+/**
+ * @brief Sort list elements for faster element access.
+ * 
+ * @param list list to linearize
+ * @param err_code variable to use as errno
+ */
+void List_linearize(List* const list, int* const err_code = NULL);
 
 /**
  * @brief Insert element into the list.
@@ -129,7 +138,7 @@ list_report_t List_status(List* const list);
  * @param importance message importance
  */
 #define List_dump(list, importance) \
-    log_printf(importance, LIST_DUMP_TAG, "Called list dumping."); \
+    log_printf(importance, LIST_DUMP_TAG, "Called list dumping.\n"); \
     _List_dump(list, importance, __LINE__, __PRETTY_FUNCTION__, __FILE__);
 
 /**
@@ -137,9 +146,9 @@ list_report_t List_status(List* const list);
  * 
  * @param list 
  * @param importance message importance
- * @param line line at which the callwas at
+ * @param line line at which the call was at
  * @param func_name name of the top-function
- * @param file_name name of the file where invokation happend
+ * @param file_name name of the file where invocation happened
  */
 void _List_dump(List* const list, const unsigned int importance, const int line, const char* func_name, const char* file_name);
 

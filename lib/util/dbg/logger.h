@@ -35,9 +35,9 @@ enum IMPORTANCES {
  * @param tag prefix of the message
  * @param __VA_ARGS__ arguments as if they were in printf()
  */
-#define log_printf(importance, tag, ...) do {                                                            \
-    _log_printf(importance, tag, " ----- Called from %s:%d. -----\n", __FILE__, __LINE__);  \
-    _log_printf(importance, tag, __VA_ARGS__);                                                           \
+#define log_printf(importance, tag, ...) do { \
+    _log_printf(importance, tag, " ----- Called from %s:%d [%s]. -----\n", __FILE__, __LINE__, __PRETTY_FUNCTION__); \
+    _log_printf(importance, tag, __VA_ARGS__); \
 } while(0)
 #else
 /**
@@ -66,10 +66,10 @@ enum IMPORTANCES {
  * @brief Open log file or creates empty one.
  * 
  * @param filename (optional) log file name
- * @param threshold (optional) value, below which porgramm would print log lines into dummy file.
+ * @param threshold (optional) value, below which program would print log lines into dummy file.
  * @param error_code (optional) variable to put function execution code in
  */
-void log_init(const char* filename = "log", const unsigned int threshold = 0, int* error_code = NULL);
+void log_init(const char* filename = "log.html", const unsigned int threshold = 0, int* error_code = NULL);
 
 /**
  * @brief Print line to logs with automatic prefix.

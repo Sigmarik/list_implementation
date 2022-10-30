@@ -43,7 +43,7 @@ const int NUMBER_OF_OWLS = 10;
 int main(const int argc, const char** argv) {
     atexit(log_end_program);
 
-    //* Ignore everything less or equaly important as status reports.
+    //* Ignore everything less or equally important as status reports.
     unsigned int log_threshold = STATUS_REPORTS + 1;
     unsigned int list_size = 128;
 
@@ -53,7 +53,7 @@ int main(const int argc, const char** argv) {
     const int number_of_tags = sizeof(line_tags) / sizeof(*line_tags);
 
     parse_args(argc, argv, number_of_tags, line_tags);
-    log_init("program_log.log", log_threshold, &errno);
+    log_init("program_log.html", log_threshold, &errno);
     print_label();
 
     List list = {};
@@ -64,18 +64,28 @@ int main(const int argc, const char** argv) {
     track_allocation(&list, (dtor_t*)List_dtor_void);
 
     for (int counter = 0; counter < 100; counter++) {
-        List_insert(&list, counter, List_find_position(&list, -1, &errno), &errno);
+        List_insert(&list, counter, List_find_position(&list, counter / 2, &errno), &errno);
+        if (errno) {
+            List_dump(&list, ERROR_REPORTS);
+            return_clean(EXIT_FAILURE);
+        }
     }
 
     List_dump(&list, ABSOLUTE_IMPORTANCE);
 
     for (int counter = 0; counter < 30; counter++) {
         List_pop(&list, List_find_position(&list, 0, &errno), &errno);
+        if (errno) {
+            List_dump(&list, ERROR_REPORTS);
+            return_clean(EXIT_FAILURE);
+        }
     }
 
     List_dump(&list, ABSOLUTE_IMPORTANCE);
 
-    while (list.size) List_pop(&list, List_find_position(&list, -1, &errno), &errno);
+    List_linearize(&list, &errno);
+
+    List_dump(&list, ABSOLUTE_IMPORTANCE);
 
     return_clean(errno == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
 }
@@ -96,7 +106,7 @@ void print_owl(const int argc, void** argv, const char* argument) {
 }
 
 void print_label() {
-    printf("Stackworks lib showcase by Ilya Kudryashov.\n");
+    printf("Listworks lib showcase by Ilya Kudryashov.\n");
     printf("Program implements TUI for the list.\n");
     printf("Build from\n%s %s\n", __DATE__, __TIME__);
     log_printf(ABSOLUTE_IMPORTANCE, "build info", "Build from %s %s.\n", __DATE__, __TIME__);

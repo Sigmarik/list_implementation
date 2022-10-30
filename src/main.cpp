@@ -45,7 +45,7 @@ int main(const int argc, const char** argv) {
 
     //* Ignore everything less or equally important as status reports.
     unsigned int log_threshold = STATUS_REPORTS + 1;
-    unsigned int list_size = 128;
+    unsigned int list_size = 16;
 
     ActionTag line_tags[] = {
         #include "cmd_flags/main_flags.h"
@@ -63,7 +63,7 @@ int main(const int argc, const char** argv) {
 
     track_allocation(&list, (dtor_t*)List_dtor_void);
 
-    for (int counter = 0; counter < 100; counter++) {
+    for (int counter = 0; counter < 10; counter++) {
         List_insert(&list, counter, List_find_position(&list, counter / 2, &errno), &errno);
         if (errno) {
             List_dump(&list, ERROR_REPORTS);
@@ -73,7 +73,7 @@ int main(const int argc, const char** argv) {
 
     List_dump(&list, ABSOLUTE_IMPORTANCE);
 
-    for (int counter = 0; counter < 30; counter++) {
+    for (int counter = 0; counter < 3; counter++) {
         List_pop(&list, List_find_position(&list, 0, &errno), &errno);
         if (errno) {
             List_dump(&list, ERROR_REPORTS);

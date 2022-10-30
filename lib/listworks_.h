@@ -139,7 +139,8 @@ list_report_t List_status(List* const list);
  */
 #define List_dump(list, importance) \
     log_printf(importance, LIST_DUMP_TAG, "Called list dumping.\n"); \
-    _List_dump(list, importance, __LINE__, __PRETTY_FUNCTION__, __FILE__);
+    _List_dump(list, importance, __LINE__, __PRETTY_FUNCTION__, __FILE__); \
+    List_dump_graph(list, importance);
 
 /**
  * @brief [Should only be called by List_dump() macro] Dump the list into logs.
@@ -151,5 +152,13 @@ list_report_t List_status(List* const list);
  * @param file_name name of the file where invocation happened
  */
 void _List_dump(List* const list, const unsigned int importance, const int line, const char* func_name, const char* file_name);
+
+/**
+ * @brief Place an image of the list into log HTML document.
+ * 
+ * @param list 
+ * @param importance
+ */
+void List_dump_graph(List* const list, const unsigned int importance);
 
 #endif

@@ -16,6 +16,8 @@
 
 #include "listworks_.h"
 
+#include "list_config.h"
+
 _ListCell* _List_ptr_by_index(List* list, size_t index, int id);
 
 void List_ctor(List* list, size_t capacity, int* const err_code) {
@@ -82,6 +84,14 @@ void List_linearize(List* const list, int* const err_code) {
     }
 
     list->first_empty = list->buffer + list->size + 1;
+
+    for (size_t id = 1; id < list->size; ++id) {
+        list->buffer[id].next = list->buffer + id + 1;
+        list->buffer[id].prev = list->buffer + id - 1;
+    }
+
+    list->buffer[list->size].next = list->buffer;
+    list->buffer->prev = list->buffer + list->size;
 
     for (size_t id = list->size + 1; id < list->capacity; ++id) {
         list->buffer[id].next = list->buffer + id + 1;
@@ -277,8 +287,40 @@ void _List_dump(List* const list, const unsigned int importance, const int line,
         _log_printf(importance, LIST_DUMP_TAG, "\t\t[%5ld] = %02X %02X %02X %02X (%s), next [%ld], prev [%ld]\n", id,
             data_start[0] & 0xFF, data_start[1] & 0xFF, data_start[2] & 0xFF, data_start[3] & 0xFF,
             list->buffer[id].content == LIST_ELEM_POISON ? "POISON" : "VALUE",
-            list->buffer[id].next - list->buffer, list->buffer[id].prev ? list->buffer[id].prev - list->buffer : -1);
+            list->buffer[id].next - list->buffer, list->buffer[id].prev - list->buffer);
     }
+}
+
+static int PictCount = 0;
+
+void List_dump_graph(List* const list, unsigned int importance) {
+    _LOG_FAIL_CHECK_(List_status(list) == 0, "error", ERROR_REPORTS, return, NULL, 0);
+    FILE* temp_file = fopen(LIST_TEMP_DOT_FNAME, "w");
+    fputs("digraph G {\n", temp_file);
+    fputs(  "\trankdir=LR\n"
+            "\tlayout=dot\n"
+            "\tsplines=ortho\n"
+            , temp_file);
+    for (size_t id = 0; id < list->capacity; ++id) {
+        unsigned char* data = (unsigned char*)&(list->buffer + id)->content;
+        _ListCell* cell = list->buffer + id;
+        fprintf(temp_file, LIST_VERTEX_FORMAT);
+    }
+    for (size_t id = 0; id < list->capacity - 1; ++id) {
+        fprintf(temp_file, "\tV%d->V%d [weight=999999999 color=none]\n", (int)id, (int)id + 1);
+    }
+    for (size_t id = 0; id < list->capacity; ++id) {
+        fprintf(temp_file, "\tV%ld->V%ld [arrowsize=0.5]\n", (long int)id, list->buffer[id].next - list->buffer);
+    }
+    fputc('}', temp_file);
+    fclose(temp_file);
+    system("mkdir -p " LIST_LOG_ASSET_FOLD_NAME);
+    char pict_name[LIST_PICT_NAME_SIZE] = "";
+    sprintf(pict_name, LIST_LOG_ASSET_FOLD_NAME "/pict%04d.png", ++PictCount);
+    char draw_request[LIST_DRAW_REQUEST_SIZE] = "";
+    sprintf(draw_request, "dot -Tpng -o %s " LIST_TEMP_DOT_FNAME, pict_name);
+    system(draw_request);
+    _log_printf(importance, "list_img_dump", "\n<img src=\"%s\">\n", pict_name);
 }
 
 #endif

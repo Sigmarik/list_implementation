@@ -18,7 +18,7 @@
 #define LIST_VALUE_COLOR "none"
 #define LIST_POISON_COLOR "grey90"
 
-#define LIST_VERTEX_FORMAT "\tV%d[shape=rectangle label=<<TABLE\n" \
+#define LIST_VERTEX_FORMAT "\tV%d[shape=plaintext label=<<TABLE\n" \
     "\t\tBORDER=\"0\" CELLBORDER=\"1\" CELLSPACING=\"0\">\n" \
     "\t\t<TR><TD PORT=\"head\" BGCOLOR=\"%s\">Cell %d</TD></TR>\n" \
     "\t\t<TR><TD BGCOLOR=\"%s\">%02X %02X %02X %02X</TD></TR>\n" \

@@ -310,7 +310,7 @@ void List_dump_graph(List* const list, unsigned int importance) {
         fprintf(temp_file, "\tV%d->V%d [weight=999999999 color=none]\n", (int)id, (int)id + 1);
     }
     for (size_t id = 0; id < list->capacity; ++id) {
-        fprintf(temp_file, "\tV%ld->V%ld [arrowsize=0.5]\n", (long int)id, list->buffer[id].next - list->buffer);
+        fprintf(temp_file, "\tV%ld->V%ld [arrowsize=0.3]\n", (long int)id, list->buffer[id].next - list->buffer);
     }
     fputc('}', temp_file);
     fclose(temp_file);

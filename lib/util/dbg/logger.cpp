@@ -71,7 +71,7 @@ static FILE* log_file(const unsigned int importance) {
 void log_close(int* error_code) {
     if (!log_file()) return;
     log_printf(ABSOLUTE_IMPORTANCE, "close", "Closing log file.\n\n");
-    fprintf(logfile, "<pre>");
+    fprintf(logfile, "</pre>");
     if (!fclose(logfile)) {
         if (error_code) *error_code = FILE_ERROR;
     }

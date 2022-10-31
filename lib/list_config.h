@@ -27,7 +27,7 @@
     cell->content==LIST_ELEM_POISON ? LIST_POISON_COLOR : LIST_VALUE_COLOR, \
     data[0], data[1], data[2], data[3], cell->prev-list->buffer, cell->next-list->buffer
 
-const size_t LIST_PICT_NAME_SIZE = 32;
-const size_t LIST_DRAW_REQUEST_SIZE = 128;
+const size_t LIST_PICT_NAME_SIZE = 128;
+const size_t LIST_DRAW_REQUEST_SIZE = 256;
 
 #endif

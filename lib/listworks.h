@@ -16,6 +16,8 @@
 
 #include "listworks_.h"
 
+#include <time.h>
+
 #include "list_config.h"
 
 _ListCell* _List_ptr_by_index(List* list, size_t index, int id);
@@ -316,7 +318,11 @@ void List_dump_graph(List* const list, unsigned int importance) {
     fclose(temp_file);
     system("mkdir -p " LIST_LOG_ASSET_FOLD_NAME);
     char pict_name[LIST_PICT_NAME_SIZE] = "";
-    sprintf(pict_name, LIST_LOG_ASSET_FOLD_NAME "/pict%04d.png", ++PictCount);
+
+    time_t raw_time = 0;
+    time(&raw_time);
+
+    sprintf(pict_name, LIST_LOG_ASSET_FOLD_NAME "/pict%04d_%ld.png", ++PictCount, raw_time);
     char draw_request[LIST_DRAW_REQUEST_SIZE] = "";
     sprintf(draw_request, "dot -Tpng -o %s " LIST_TEMP_DOT_FNAME, pict_name);
     system(draw_request);

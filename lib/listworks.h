@@ -87,7 +87,7 @@ void List_linearize(List* const list, int* const err_code) {
 
     list->first_empty = list->buffer + list->size + 1;
 
-    for (size_t id = 1; id < list->size; ++id) {
+    for (size_t id = 1; id < list->capacity; ++id) {
         list->buffer[id].next = list->buffer + id + 1;
         list->buffer[id].prev = list->buffer + id - 1;
     }
@@ -95,10 +95,6 @@ void List_linearize(List* const list, int* const err_code) {
     list->buffer[list->size].next = list->buffer;
     list->buffer->prev = list->buffer + list->size;
 
-    for (size_t id = list->size + 1; id < list->capacity; ++id) {
-        list->buffer[id].next = list->buffer + id + 1;
-        list->buffer[id].prev = list->buffer + id - 1;
-    }
     list->buffer[list->size + 1].prev = list->buffer + list->capacity - 1;
     list->buffer[list->capacity - 1].next = list->buffer + list->size + 1;
 
@@ -165,7 +161,8 @@ list_position_t List_insert(List* const list, const list_elem_t elem, const list
 }
 
 list_position_t List_find_position(List* const list, const int index, int* const err_code) {
-    _LOG_FAIL_CHECK_(List_status(list) == 0,                     "error", ERROR_REPORTS, return 0, err_code, EFAULT);
+    _LOG_FAIL_CHECK_(List_status(list) == 0, "error", ERROR_REPORTS, return 0, err_code, EFAULT);
+
     _LOG_FAIL_CHECK_((-(int)list->size <= index && index < (int)list->size) || list->size == 0, "error", ERROR_REPORTS, {
         log_printf(ERROR_REPORTS, "error", "Requested index was %d with size %lld.\n", index, (long long) list->size);
         return 0;
@@ -174,25 +171,22 @@ list_position_t List_find_position(List* const list, const int index, int* const
     if (list->size == 0) return 0;
 
     if (list->linearized) {
+        long long delta = index + (long long)(list->capacity - 1);
+        _ListCell* count_start = list->buffer->prev;
+
         if (index >= 0) {
-            return (unsigned long long)(list->buffer->next - list->buffer - 1 + index) % (list->capacity - 1) + 1;
-        } else {
-            return (unsigned long long)(list->buffer->prev - list->buffer + index + (long long)(list->capacity - 1)) % (list->capacity - 1) + 1;
+            delta = index - 1;
+            count_start = list->buffer->next;
         }
+
+        return (unsigned long long)(count_start - list->buffer + delta) % (list->capacity - 1) + 1;
     }
 
-    _ListCell* current = NULL;
+    _ListCell* current = index >= 0 ? 
+        list->buffer->next : list->buffer->prev;
 
-    if (index >= 0) {
-        current = list->buffer->next;
-        for (int id = 0; id < index; ++id) {
-            current = current->next;
-        }
-    } else {
-        current = list->buffer->prev;
-        for (int id = -1; id > index; --id) {
-            current = current->prev;
-        }
+    for (int id = 0; id < index; ++id) {
+        current = index >= 0 ? current->next : current->prev;
     }
 
     return (list_position_t)(current - list->buffer);
@@ -279,10 +273,12 @@ void _List_dump(List* const list, const unsigned int importance, const int line,
     }
 
     _log_printf(importance, LIST_DUMP_TAG, "List:\n");
+
     _log_printf(importance, LIST_DUMP_TAG, "\tfirst empty = %lld,\n", (long long) (list->first_empty - list->buffer));
     _log_printf(importance, LIST_DUMP_TAG, "\tsize =        %lld,\n", (long long) list->size);
     _log_printf(importance, LIST_DUMP_TAG, "\tcapacity =    %lld,\n", (long long) list->capacity);
     _log_printf(importance, LIST_DUMP_TAG, "\tlinearized =  %d,\n", list->linearized);
+
     _log_printf(importance, LIST_DUMP_TAG, "\tbuffer at %p:\n", list->buffer);
 
     for (size_t id = 0; id < list->capacity; id++) {

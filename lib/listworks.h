@@ -252,6 +252,11 @@ list_report_t List_status(List* const list) {
     if (!check_ptr(list->buffer))     report |= LIST_NULL_CONTENT;
     else if (list->first_empty <= list->buffer || list->first_empty > list->buffer + list->capacity)
         report |= LIST_INV_FREE;
+    
+    for (_ListCell* cell = list->buffer; cell < list->buffer + list->capacity; ++cell) {
+        if (cell->prev == NULL || cell->next == NULL ||
+            cell->prev->next != cell || cell->next->prev != cell) report |= LIST_INV_CONNECTIONS;
+    }
 
     return report;
 }

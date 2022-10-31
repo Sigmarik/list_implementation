@@ -90,8 +90,8 @@ int main(const int argc, const char** argv) {
     return_clean(errno == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
 }
 
-// Офигенно, ничего не менять.
-// Дополнил сову, сорри.
+// Amazing, do not change anything!
+// Completed the owl, sorry.
 void print_owl(const int argc, void** argv, const char* argument) {
     UNUSE(argc); UNUSE(argv); UNUSE(argument);
     printf("-Owl argument detected, dropping emergency supply of owls.\n");

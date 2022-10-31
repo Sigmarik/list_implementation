@@ -5,19 +5,17 @@ Second af all, it was not expected that anyone will ever make contributions to t
 And, finally, if you still want to commit changes, make sure you read README.md and CODE_OF_CONDUCT.md 
 as these files contain some important information about how you should not be an a*shole.
 ## Language
-Primarely English (US). It also applyes to comments, documentation, naming and messages.
-There are a few (2 lines in main.cpp) comments written in Russian, though, as they describe 
-joke function and not very important, and it is highly exceptional and should not be present anywhere else in the code.
-It also will be highly appreciated if you spot grammatical mistakes anywhere in the content of this reposiory and will be able to fix them.
+Primarily English (US). It also applies to comments, documentation, naming and messages.
+It also will be highly appreciated if you spot grammatical mistakes anywhere in the content of this repository and will be able to fix them.
 ## Code Style
-We use codestyle that is close to pep8 for python, but for C++.
+We use code style that is close to pep8 for python, but for C++.
 
 ### Naming
 Variables and functions should be names in lower case.
 ```
 void example_function(int example_variable = 1);
 ```
-Classes and structures should be names in cammel case, starting with capital letter.
+Classes and structures should be names in camel case, starting with capital letter.
 ```
 struct ExampleStruct {
     const char* first_name = "";
@@ -100,14 +98,14 @@ int acceleration = SURFACE_G * sin(1.25);
 
 //// Unimportant comments.
 ```
-Function, class, structure, macro and file descriptions should be written compatible with the newest doxygen standart and marked as
+Function, class, structure, macro and file descriptions should be written compatible with the newest doxygen standard and marked as
 ```
 /**
  * @brief
  * Briefs should be written below brief tag
  * if they are too long for one line.
  *
- * @param number_of_owls general argument or memeber
+ * @param number_of_owls general argument or member
  *
  * @param[in] input_param function input argument 
  *                        (if out argument is present)
@@ -165,7 +163,7 @@ double some_complex_value = (number_of_bats + number_of_caves -
 ```
 
 ## Logger Structure
-**logger** module, when initialized through ```log_init()``` function, creates file that later would be filled with logs and defines certaint importance thrashold that would prevent less important messages (like status reports) from filling the log file. When function ```log_printf()``` is called, it receives importance level of a message to print, and, if that importance is less then logger threshold, ignores the message.
+**logger** module, when initialized through ```log_init()``` function, creates file that later would be filled with logs and defines certain importance threshold that would prevent less important messages (like status reports) from filling the log file. When function ```log_printf()``` is called, it receives importance level of a message to print, and, if that importance is less then logger threshold, ignores the message.
 ## Contact Information
 For more information about contributing to the project contact
 

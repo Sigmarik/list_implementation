@@ -72,8 +72,8 @@ int main(const int argc, const char** argv) {
     for (int counter = 0; counter < 10; counter++) {
         int request_position = counter / 2;
         list_position_t position = List_find_position(&list, request_position, &errno);
-        log_printf(STATUS_REPORTS, "status", "Pushing element %d to the list with request position %d (pointer %ld).\n",
-                   counter, request_position, position);
+        log_printf(STATUS_REPORTS, "status", "Pushing element %d to the list with request position %d (pointer %lld).\n",
+                   counter, request_position, (long long) position);
         List_insert(&list, counter, position, &errno);
         if (errno) {
             List_dump(&list, ERROR_REPORTS);
@@ -90,8 +90,8 @@ int main(const int argc, const char** argv) {
     for (int counter = 0; counter < 3; counter++) {
         int request_position = 0;
         list_position_t position = List_find_position(&list, request_position, &errno);
-        log_printf(STATUS_REPORTS, "status", "Removing element from the list with request position %d (pointer %ld).\n",
-                   request_position, position);
+        log_printf(STATUS_REPORTS, "status", "Removing element from the list with request position %d (pointer %lld).\n",
+                   request_position, (long long)position);
         List_pop(&list, position, &errno);
         if (errno) {
             List_dump(&list, ERROR_REPORTS);
@@ -117,7 +117,7 @@ int main(const int argc, const char** argv) {
 // Amazing, do not change anything!
 // Completed the owl, sorry.
 void print_owl(const int argc, void** argv, const char* argument) {
-    UNUSE(argc); UNUSE(argv); UNUSE(argument);
+    SILENCE_UNUSED(argc); SILENCE_UNUSED(argv); SILENCE_UNUSED(argument);
     printf("-Owl argument detected, dropping emergency supply of owls.\n");
     for (int index = 0; index < NUMBER_OF_OWLS; index++) {
         puts(R"(    A_,,,_A    )");

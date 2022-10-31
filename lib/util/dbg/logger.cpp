@@ -25,11 +25,11 @@ static void log_prefix(const char* tag = "status", const unsigned int importance
  */
 static FILE* log_file(const unsigned int importance = ABSOLUTE_IMPORTANCE);
 
-void log_init(const char* filename, const unsigned int threshold, int* error_code) {
+void log_init(const char* filename, const unsigned int threshold, int* const error_code) {
     log_threshold = threshold;
 
     if ((logfile = fopen(filename, "a"))) {
-        setvbuf(logfile, NULL, _IONBF, 1);
+        setvbuf(logfile, NULL, _IONBF, 0);
         fprintf(logfile, "<pre>");
         log_printf(ABSOLUTE_IMPORTANCE, "open", "Log file %s was opened.\n", filename);
         return;
@@ -71,8 +71,6 @@ static FILE* log_file(const unsigned int importance) {
 void log_close(int* error_code) {
     if (!log_file()) return;
     log_printf(ABSOLUTE_IMPORTANCE, "close", "Closing log file.\n\n");
-    fprintf(logfile, "</pre>");
-    if (!fclose(logfile)) {
-        if (error_code) *error_code = FILE_ERROR;
-    }
+    fprintf(log_file(ABSOLUTE_IMPORTANCE), "</pre>");
+    if (!fclose(logfile) && error_code) *error_code = FILE_ERROR;
 }

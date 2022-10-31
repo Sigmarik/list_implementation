@@ -30,7 +30,7 @@ void MemorySegment_dtor(MemorySegment* segment) {
 
 void _MemorySegment_dump(MemorySegment* segment, unsigned int importance) {
     for (size_t id = 0; id < segment->size; ++id) {
-        _log_printf(importance, "dump", "[%6ld] = %d\n", id, segment->content[id]);
+        _log_printf(importance, "dump", "[%6lld] = %d\n", (long long) id, segment->content[id]);
     }
 }
 

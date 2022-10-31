@@ -167,7 +167,7 @@ list_position_t List_insert(List* const list, const list_elem_t elem, const list
 list_position_t List_find_position(List* const list, const int index, int* const err_code) {
     _LOG_FAIL_CHECK_(List_status(list) == 0,                     "error", ERROR_REPORTS, return 0, err_code, EFAULT);
     _LOG_FAIL_CHECK_((-(int)list->size <= index && index < (int)list->size) || list->size == 0, "error", ERROR_REPORTS, {
-        log_printf(ERROR_REPORTS, "error", "Requested index was %d with size %ld.\n", index, list->size);
+        log_printf(ERROR_REPORTS, "error", "Requested index was %d with size %lld.\n", index, (long long) list->size);
         return 0;
     }, err_code, EFAULT);
 
@@ -263,7 +263,8 @@ list_report_t List_status(List* const list) {
 }
 
 void _List_dump(List* const list, const unsigned int importance, const int line, const char* func_name, const char* file_name) {
-    _log_printf(importance, LIST_DUMP_TAG, " ----- List dump in function %s of file %s (%ld): ----- \n", func_name, file_name, line);
+    _log_printf(importance, LIST_DUMP_TAG, " ----- List dump in function %s of file %s (%lld): ----- \n",
+                func_name, file_name, (long long) line);
 
     list_report_t status = List_status(list);
 
@@ -278,18 +279,18 @@ void _List_dump(List* const list, const unsigned int importance, const int line,
     }
 
     _log_printf(importance, LIST_DUMP_TAG, "List:\n");
-    _log_printf(importance, LIST_DUMP_TAG, "\tfirst empty = %ld,\n", list->first_empty - list->buffer);
-    _log_printf(importance, LIST_DUMP_TAG, "\tsize =        %ld,\n", list->size);
-    _log_printf(importance, LIST_DUMP_TAG, "\tcapacity =    %ld,\n", list->capacity);
+    _log_printf(importance, LIST_DUMP_TAG, "\tfirst empty = %lld,\n", (long long) (list->first_empty - list->buffer));
+    _log_printf(importance, LIST_DUMP_TAG, "\tsize =        %lld,\n", (long long) list->size);
+    _log_printf(importance, LIST_DUMP_TAG, "\tcapacity =    %lld,\n", (long long) list->capacity);
     _log_printf(importance, LIST_DUMP_TAG, "\tlinearized =  %d,\n", list->linearized);
     _log_printf(importance, LIST_DUMP_TAG, "\tbuffer at %p:\n", list->buffer);
 
     for (size_t id = 0; id < list->capacity; id++) {
-        char* data_start = (char*)(list->buffer + id);
-        _log_printf(importance, LIST_DUMP_TAG, "\t\t[%5ld] = %02X %02X %02X %02X (%s), next [%ld], prev [%ld]\n", id,
-            data_start[0] & 0xFF, data_start[1] & 0xFF, data_start[2] & 0xFF, data_start[3] & 0xFF,
+        unsigned char* data_start = (unsigned char*)(list->buffer + id);
+        _log_printf(importance, LIST_DUMP_TAG, "\t\t[%5ld] = %02X %02X %02X %02X (%s), next [%lld], prev [%lld]\n", (long) id,
+            data_start[0], data_start[1], data_start[2], data_start[3],
             list->buffer[id].content == LIST_ELEM_POISON ? "POISON" : "VALUE",
-            list->buffer[id].next - list->buffer, list->buffer[id].prev - list->buffer);
+            (long long) (list->buffer[id].next - list->buffer), (long long) (list->buffer[id].prev - list->buffer));
     }
 }
 

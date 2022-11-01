@@ -23,8 +23,8 @@
     "\t\t<TR><TD PORT=\"head\" BGCOLOR=\"%s\">Cell %d</TD></TR>\n" \
     "\t\t<TR><TD BGCOLOR=\"%s\">%02X %02X %02X %02X</TD></TR>\n" \
     "\t\t<TR><TD PORT=\"bottom\">P:%ld N:%ld</TD></TR></TABLE>>]\n", (int)id, \
-    cell==list->first_empty ? LIST_POISON_COLOR : LIST_VALUE_COLOR, (int)id, \
-    cell->content==LIST_ELEM_POISON ? LIST_POISON_COLOR : LIST_VALUE_COLOR, \
+    cell==list->first_empty || cell==list->buffer ? LIST_POISON_COLOR : LIST_VALUE_COLOR, \
+    (int)id, cell->content==LIST_ELEM_POISON ? LIST_POISON_COLOR : LIST_VALUE_COLOR, \
     data[0], data[1], data[2], data[3], cell->prev-list->buffer, cell->next-list->buffer
 
 const size_t LIST_PICT_NAME_SIZE = 128;

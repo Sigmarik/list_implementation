@@ -30,7 +30,7 @@ void log_init(const char* filename, const unsigned int threshold, int* const err
 
     if ((logfile = fopen(filename, "a"))) {
         setvbuf(logfile, NULL, _IONBF, 0);
-        fprintf(logfile, "<pre>");
+        fprintf(logfile, "<pre>\n");
         log_printf(ABSOLUTE_IMPORTANCE, "open", "Log file %s was opened.\n", filename);
         return;
     }
@@ -71,6 +71,6 @@ static FILE* log_file(const unsigned int importance) {
 void log_close(int* error_code) {
     if (!log_file()) return;
     log_printf(ABSOLUTE_IMPORTANCE, "close", "Closing log file.\n\n");
-    fprintf(log_file(ABSOLUTE_IMPORTANCE), "</pre>");
+    fprintf(log_file(ABSOLUTE_IMPORTANCE), "</pre>\n");
     if (!fclose(logfile) && error_code) *error_code = FILE_ERROR;
 }

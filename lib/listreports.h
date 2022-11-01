@@ -14,11 +14,11 @@
 
 typedef int list_report_t;
 enum ListStatus {
-    LIST_NULL = 1 << 0,
-    LIST_BIG_SIZE = 1 << 1,
-    LIST_NULL_CONTENT = 1 << 2,
-    LIST_INV_FREE = 1 << 3,
-    LIST_INV_CONNECTIONS = 1 << 4,
+    LIST_NULL =             1 << 0,
+    LIST_BIG_SIZE =         1 << 1,
+    LIST_NULL_CONTENT =     1 << 2,
+    LIST_INV_FREE =         1 << 3,
+    LIST_INV_CONNECTIONS =  1 << 4,
 };
 
 static const char* const LIST_STATUS_DESCR[] = {

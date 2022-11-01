@@ -27,6 +27,8 @@ void List_ctor(List* list, size_t capacity, int* const err_code) {
 
     list->buffer = (_ListCell*) calloc(capacity, sizeof(*list->buffer));
 
+    _LOG_FAIL_CHECK_(list->buffer, "error", ERROR_REPORTS, return, err_code, ENOMEM);
+
     for (size_t id = 0; id < capacity; ++id) {
         _ListCell* cell = list->buffer + id;
         *cell = _ListCell {};

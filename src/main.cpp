@@ -23,23 +23,6 @@ const list_elem_t LIST_ELEM_POISON = (list_elem_t)0xC0FEDEADBEEFFACE;
 
 #define MAIN
 
-/**
- * @brief Print a bunch of owls.
- * 
- * @param argc unimportant
- * @param argv unimportant
- * @param argument unimportant
- */
-void print_owl(const int argc, void** argv, const char* argument);
-
-/**
- * @brief Print program label and build date/time to console and log.
- * 
- */
-void print_label();
-
-const int NUMBER_OF_OWLS = 10;
-
 int main(const int argc, const char** argv) {
     atexit(log_end_program);
 
@@ -112,26 +95,4 @@ int main(const int argc, const char** argv) {
     List_dump(&list, ABSOLUTE_IMPORTANCE);
 
     return_clean(errno == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
-}
-
-// Amazing, do not change anything!
-// Completed the owl, sorry.
-void print_owl(const int argc, void** argv, const char* argument) {
-    SILENCE_UNUSED(argc); SILENCE_UNUSED(argv); SILENCE_UNUSED(argument);
-    printf("-Owl argument detected, dropping emergency supply of owls.\n");
-    for (int index = 0; index < NUMBER_OF_OWLS; index++) {
-        puts(R"(    A_,,,_A    )");
-        puts(R"(   ((O)V(O))   )");
-        puts(R"(  ("\"|"|"/")  )");
-        puts(R"(   \"|"|"|"/   )");
-        puts(R"(     "| |"     )");
-        puts(R"(      ^ ^      )");
-    }
-}
-
-void print_label() {
-    printf("Listworks lib showcase by Ilya Kudryashov.\n");
-    printf("Program implements TUI for the list.\n");
-    printf("Build from\n%s %s\n", __DATE__, __TIME__);
-    log_printf(ABSOLUTE_IMPORTANCE, "build info", "Build from %s %s.\n", __DATE__, __TIME__);
 }

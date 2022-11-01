@@ -12,6 +12,7 @@
 #ifndef COMMON_UTILS_H
 #define COMMON_UTILS_H
 
+#include "config.h"
 #include "lib/alloc_tracker/alloc_tracker.h"
 
 /**
@@ -59,5 +60,20 @@ void _MemorySegment_dump(MemorySegment* segment, unsigned int importance);
  * @return 
  */
 int clamp(const int value, const int left, const int right);
+
+/**
+ * @brief Print a bunch of owls.
+ * 
+ * @param argc unimportant
+ * @param argv unimportant
+ * @param argument unimportant
+ */
+void print_owl(const int argc, void** argv, const char* argument);
+
+/**
+ * @brief Print program label and build date/time to console and log.
+ * 
+ */
+void print_label();
 
 #endif

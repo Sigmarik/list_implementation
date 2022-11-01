@@ -15,7 +15,7 @@
 #include "lib/util/dbg/debug.h"
 #include "lib/util/argparser.h"
 #include "lib/alloc_tracker/alloc_tracker.h"
-#include "utils/common.h"
+#include "utils/main_utils.h"
 
 typedef long long list_elem_t;
 const list_elem_t LIST_ELEM_POISON = (list_elem_t)0xC0FEDEADBEEFFACE;

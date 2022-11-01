@@ -37,7 +37,7 @@ all: asset main
 
 LIB_OBJECTS = argparser.o logger.o debug.o alloc_tracker.o
 
-MAIN_OBJECTS = main.o common.o $(LIB_OBJECTS)
+MAIN_OBJECTS = main.o main_utils.o $(LIB_OBJECTS)
 main: $(MAIN_OBJECTS)
 	mkdir -p $(BLD_FOLDER)
 	$(CC) $(MAIN_OBJECTS) $(CFLAGS) -o $(BLD_FOLDER)/$(BLD_FULL_NAME)
@@ -52,8 +52,8 @@ run:
 main.o:
 	$(CC) $(CFLAGS) -c src/main.cpp
 
-common.o:
-	$(CC) $(CFLAGS) -c src/utils/common.cpp
+main_utils.o:
+	$(CC) $(CFLAGS) -c src/utils/main_utils.cpp
 
 alloc_tracker.o:
 	$(CC) $(CFLAGS) -c lib/alloc_tracker/alloc_tracker.cpp
